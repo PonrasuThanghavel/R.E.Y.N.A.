@@ -6,11 +6,11 @@ Provides weather information for specified locations.
 
 def get_weather(location: str, **kwargs) -> dict:
     """Get weather for a location.
-    
+
     Args:
         location: Location name.
         **kwargs: Additional arguments (unused).
-        
+
     Returns:
         Dictionary with temperature, condition, and location.
     """

@@ -62,11 +62,11 @@ Rules:
 # =========================
 def generate_action(user_input: str, context: str) -> Optional[ActionSchema]:
     """Generate validated action with retries and fallback.
-    
+
     Args:
         user_input: User query string.
         context: Context information.
-        
+
     Returns:
         ActionSchema or None if generation fails.
     """
@@ -102,11 +102,11 @@ def _generate_action_via_bridge(
     user_input: str, context: str
 ) -> Optional[ActionSchema]:
     """Generate action via OpenClaw Reyna bridge.
-    
+
     Args:
         user_input: User query.
         context: Context information.
-        
+
     Returns:
         ActionSchema or None if bridge call fails.
     """
@@ -136,11 +136,11 @@ def _generate_action_via_ollama(
     user_input: str, context: str
 ) -> Optional[ActionSchema]:
     """Generate action via Ollama LLM.
-    
+
     Args:
         user_input: User query.
         context: Context information.
-        
+
     Returns:
         ActionSchema or None if Ollama call fails.
     """
@@ -182,11 +182,11 @@ def _generate_action_via_ollama(
 # =========================
 def _build_prompt(user_input: str, context: str) -> str:
     """Build sanitized LLM prompt.
-    
+
     Args:
         user_input: User query.
         context: Context information.
-        
+
     Returns:
         Formatted prompt string.
     """
@@ -195,13 +195,13 @@ def _build_prompt(user_input: str, context: str) -> str:
 
 def _safe_parse_json(text: str) -> dict:
     """Extract and parse JSON safely from LLM output.
-    
+
     Args:
         text: Raw text from LLM.
-        
+
     Returns:
         Parsed dictionary.
-        
+
     Raises:
         ValueError: If JSON parsing fails.
     """
@@ -218,10 +218,10 @@ def _safe_parse_json(text: str) -> dict:
 
 def _validate_action(data: dict) -> Optional[ActionSchema]:
     """Validate action schema and apply security filters.
-    
+
     Args:
         data: Raw action dictionary.
-        
+
     Returns:
         Validated ActionSchema or None if validation fails.
     """
@@ -246,7 +246,7 @@ def _validate_action(data: dict) -> Optional[ActionSchema]:
 
 def _log_error(msg: str) -> None:
     """Log error message. Replace with structured logging later.
-    
+
     Args:
         msg: Error message to log.
     """

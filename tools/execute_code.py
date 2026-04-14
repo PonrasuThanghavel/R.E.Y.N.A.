@@ -10,12 +10,12 @@ import tempfile
 
 def execute_code(language: str, code: str, **kwargs) -> dict:
     """Execute code locally with timeout.
-    
+
     Args:
         language: Programming language (only 'python' supported).
         code: Code to execute.
         **kwargs: Additional arguments (unused).
-        
+
     Returns:
         Dictionary with stdout, stderr, or error message.
     """

@@ -6,12 +6,12 @@ Provides GitHub operations like commits.
 
 def github_commit(repo: str, message: str, **kwargs) -> dict:
     """Create a GitHub commit.
-    
+
     Args:
         repo: Repository identifier.
         message: Commit message.
         **kwargs: Additional arguments (unused).
-        
+
     Returns:
         Dictionary with status and commit URL.
     """

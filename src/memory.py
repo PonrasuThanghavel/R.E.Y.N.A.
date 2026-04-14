@@ -12,7 +12,7 @@ from sentence_transformers import SentenceTransformer
 
 class MemorySystem:
     """Memory system with vector storage and semantic search.
-    
+
     Combines short-term history, context key-value store, and vector embeddings
     for intelligent context retrieval.
     """
