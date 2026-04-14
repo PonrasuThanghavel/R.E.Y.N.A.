@@ -57,3 +57,8 @@ def route_action(action_obj: ActionSchema):
 
         # Memory update
         memory.append("reyna", f"Executed {action_name}. Result: {result}")
+
+    except (KeyError, TypeError, ValueError) as exc:
+        error_msg = f"Tool {action_name} failed: {exc}"
+        print(f"[Error: Execution] {error_msg}")
+        memory.append("system", error_msg)
