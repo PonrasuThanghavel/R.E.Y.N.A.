@@ -1,12 +1,19 @@
-import os
+"""LLM integration and action generation module.
+
+Handles communication with language models (Ollama/OpenClaw) for generating
+structured actions based on user input and context.
+"""
+
 import json
-import time
-import requests
+import os
 from typing import Optional
-from .schema import ActionSchema
-from pydantic import ValidationError
+
+import requests
 from dotenv import load_dotenv
+from pydantic import ValidationError
+
 from .reyna_bridge import bridge
+from .schema import ActionSchema
 
 load_dotenv()
 
@@ -49,12 +56,19 @@ Rules:
 - NEVER generate unsafe/destructive commands
 """
 
+
 # =========================
 # PUBLIC API
 # =========================
 def generate_action(user_input: str, context: str) -> Optional[ActionSchema]:
-    """
-    Main entry: generates validated action with retries and fallback.
+    """Generate validated action with retries and fallback.
+    
+    Args:
+        user_input: User query string.
+        context: Context information.
+        
+    Returns:
+        ActionSchema or None if generation fails.
     """
 
     for attempt in range(MAX_RETRIES):
@@ -70,7 +84,7 @@ def generate_action(user_input: str, context: str) -> Optional[ActionSchema]:
             if action:
                 return action
 
-        except Exception as e:
+        except (ValueError, ConnectionError, TimeoutError) as e:
             _log_error(f"[Retry {attempt}] Unexpected error: {e}")
 
     # Final fallback → safe unknown action
@@ -84,7 +98,18 @@ def generate_action(user_input: str, context: str) -> Optional[ActionSchema]:
 # =========================
 # BRIDGE MODE
 # =========================
-def _generate_action_via_bridge(user_input: str, context: str) -> Optional[ActionSchema]:
+def _generate_action_via_bridge(
+    user_input: str, context: str
+) -> Optional[ActionSchema]:
+    """Generate action via OpenClaw Reyna bridge.
+    
+    Args:
+        user_input: User query.
+        context: Context information.
+        
+    Returns:
+        ActionSchema or None if bridge call fails.
+    """
     try:
         prompt = _build_prompt(user_input, context)
 
@@ -99,7 +124,7 @@ def _generate_action_via_bridge(user_input: str, context: str) -> Optional[Actio
         parsed = _safe_parse_json(response)
         return _validate_action(parsed)
 
-    except Exception as e:
+    except (ValueError, IOError, OSError) as e:
         _log_error(f"[Bridge] {e}")
         return None
 
@@ -107,7 +132,18 @@ def _generate_action_via_bridge(user_input: str, context: str) -> Optional[Actio
 # =========================
 # OLLAMA MODE
 # =========================
-def _generate_action_via_ollama(user_input: str, context: str) -> Optional[ActionSchema]:
+def _generate_action_via_ollama(
+    user_input: str, context: str
+) -> Optional[ActionSchema]:
+    """Generate action via Ollama LLM.
+    
+    Args:
+        user_input: User query.
+        context: Context information.
+        
+    Returns:
+        ActionSchema or None if Ollama call fails.
+    """
     try:
         prompt = _build_prompt(user_input, context)
 
@@ -135,7 +171,7 @@ def _generate_action_via_ollama(user_input: str, context: str) -> Optional[Actio
         _log_error("[Ollama] Timeout")
     except requests.exceptions.ConnectionError:
         _log_error("[Ollama] Connection failed")
-    except Exception as e:
+    except (ValueError, KeyError) as e:
         _log_error(f"[Ollama] {e}")
 
     return None
@@ -145,15 +181,29 @@ def _generate_action_via_ollama(user_input: str, context: str) -> Optional[Actio
 # HELPERS
 # =========================
 def _build_prompt(user_input: str, context: str) -> str:
-    """
-    Sanitized prompt construction.
+    """Build sanitized LLM prompt.
+    
+    Args:
+        user_input: User query.
+        context: Context information.
+        
+    Returns:
+        Formatted prompt string.
     """
     return f"{SYSTEM_PROMPT}\n\nContext:\n{context}\n\nUser:\n{user_input}\n\nJSON:"
 
 
 def _safe_parse_json(text: str) -> dict:
-    """
-    Extract JSON safely from model output.
+    """Extract and parse JSON safely from LLM output.
+    
+    Args:
+        text: Raw text from LLM.
+        
+    Returns:
+        Parsed dictionary.
+        
+    Raises:
+        ValueError: If JSON parsing fails.
     """
     try:
         # Remove markdown if present
@@ -162,13 +212,18 @@ def _safe_parse_json(text: str) -> dict:
 
         return json.loads(text)
 
-    except json.JSONDecodeError:
-        raise ValueError(f"Invalid JSON from LLM:\n{text}")
+    except json.JSONDecodeError as exc:
+        raise ValueError(f"Invalid JSON from LLM:\n{text}") from exc
 
 
 def _validate_action(data: dict) -> Optional[ActionSchema]:
-    """
-    Validate schema + apply security filters.
+    """Validate action schema and apply security filters.
+    
+    Args:
+        data: Raw action dictionary.
+        
+    Returns:
+        Validated ActionSchema or None if validation fails.
     """
     try:
         action = ActionSchema(**data)
@@ -183,14 +238,16 @@ def _validate_action(data: dict) -> Optional[ActionSchema]:
 
     except ValidationError as e:
         _log_error(f"[Schema] {e}")
-    except Exception as e:
+    except ValueError as e:
         _log_error(f"[Security] {e}")
 
     return None
 
 
-def _log_error(msg: str):
-    """
-    Replace with structured logging later.
+def _log_error(msg: str) -> None:
+    """Log error message. Replace with structured logging later.
+    
+    Args:
+        msg: Error message to log.
     """
     print(f"[ERROR] {msg}")

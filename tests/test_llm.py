@@ -27,7 +27,7 @@ if action is None:
     print("❌ Failed: generate_action returned None")
     sys.exit(1)
 
-print(f"\n✓ Success!")
+print("\n✓ Success!")
 print(f"  Type: {type(action).__name__}")
 print(f"  Action: {action.action}")
 print(f"  Risk Level: {action.risk_level}")

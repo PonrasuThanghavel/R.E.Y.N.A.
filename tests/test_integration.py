@@ -53,7 +53,7 @@ def test_openclaw_integration():
             action = generate_action(test["user_input"], test["context"])
 
             if action:
-                print(f"✓ Success!")
+                print("✓ Success!")
                 print(f"  Action: {action.action}")
                 print(f"  Risk Level: {action.risk_level}")
                 print(f"  Parameters: {json.dumps(action.parameters, indent=4)}")
@@ -61,7 +61,7 @@ def test_openclaw_integration():
                     {"test": test["name"], "status": "pass", "action": action.action}
                 )
             else:
-                print(f"✗ Failed - No action returned")
+                print("✗ Failed - No action returned")
                 results.append({"test": test["name"], "status": "fail", "action": None})
 
         except Exception as e:

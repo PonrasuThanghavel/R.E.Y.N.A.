@@ -1,3 +1,8 @@
+"""Main entry point for R.E.Y.N.A. interactive agent.
+
+Provides the main interactive loop for user input and action generation/routing.
+"""
+
 import sys
 from .llm import generate_action
 from .router import route_action
@@ -5,6 +10,7 @@ from .memory import memory
 
 
 def main():
+    """Run the main R.E.Y.N.A. interactive loop."""
     print("=====================================================")
     print(" REYNA (Retrieval Engine, Yarn & Narrative Assistant)")
     print("=====================================================")

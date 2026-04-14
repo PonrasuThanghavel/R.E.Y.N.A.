@@ -8,7 +8,6 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 
 from llm import generate_action
-from router import route_action
 from memory import memory
 
 test_inputs = ["Tell me the weather in New York", "hi", "What's the status?"]

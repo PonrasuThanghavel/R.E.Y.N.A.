@@ -1,10 +1,22 @@
+"""Memory system with vector storage and semantic search.
+
+Manages short-term history, context, and vector embeddings for semantic memory.
+"""
+
 import datetime
 from typing import Any, List
+
 import chromadb
 from sentence_transformers import SentenceTransformer
 
 
 class MemorySystem:
+    """Memory system with vector storage and semantic search.
+    
+    Combines short-term history, context key-value store, and vector embeddings
+    for intelligent context retrieval.
+    """
+
     def __init__(self):
         # Short-term memory
         self.history = []

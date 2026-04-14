@@ -1,3 +1,8 @@
+"""OpenClaw Reyna bridge for inter-process communication.
+
+Provides file-based IPC for communicating with OpenClaw Reyna agent.
+"""
+
 import json
 import time
 import uuid

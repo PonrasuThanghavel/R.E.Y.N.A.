@@ -21,7 +21,6 @@ import importlib
 import llm
 
 importlib.reload(llm)
-from llm import generate_action
 
 print("=" * 60)
 print("Testing R.E.Y.N.A. with OpenClaw Reyna Bridge")
@@ -42,12 +41,12 @@ for user_input in test_cases:
         action = generate_action(user_input, context)
 
         if action:
-            print(f"✓ Bridge responded!")
+            print("✓ Bridge responded!")
             print(f"  Action: {action.action}")
             print(f"  Risk: {action.risk_level}")
             print(f"  Params: {action.parameters}")
         else:
-            print(f"❌ No action generated")
+            print("❌ No action generated")
     except Exception as e:
         print(f"❌ Error: {e}")
 

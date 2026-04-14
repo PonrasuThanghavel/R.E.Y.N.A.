@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
-"""
-Diagnostics tool for R.E.Y.N.A. and OpenClaw Reyna bridge
-Verifies connectivity and configuration status
+"""Diagnostics tool for system health and bridge connectivity checks.
+
+Verifies system configuration and connectivity to external services.
 """
 
-import sys
 import json
+import sys
 from pathlib import Path
 from .reyna_bridge import bridge
 
@@ -60,7 +60,7 @@ def check_ollama():
         response = requests.get(f"{ollama_url}/api/tags", timeout=5)
         if response.status_code == 200:
             models = response.json().get("models", [])
-            print(f"\n✓ Ollama is running")
+            print("\n✓ Ollama is running")
             print(f"  Available models: {len(models)}")
             for model in models[:5]:
                 print(f"    • {model.get('name', 'unknown')}")
@@ -104,7 +104,7 @@ def test_bridge_communication():
         response = bridge.ask_reyna(test_prompt)
 
         if response:
-            print(f"✓ Response received")
+            print("✓ Response received")
             print(f"  Length: {len(response)} chars")
             print(f"  Preview: {response[:100]}...")
             return True
