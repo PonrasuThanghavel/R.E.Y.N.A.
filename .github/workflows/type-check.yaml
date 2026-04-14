@@ -1,0 +1,28 @@
+name: Type Checking
+
+on: [push, pull_request]
+
+
+jobs:
+  type-check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install mypy pyright types-requests
+
+      - name: Run mypy type checker
+        run: mypy src/ tests/ tools/ --ignore-missing-imports --no-error-summary || true
+
+      - name: Run pyright
+        run: pyright src/ || true
