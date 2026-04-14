@@ -3,10 +3,10 @@ import json
 import time
 import requests
 from typing import Optional
-from schema import ActionSchema
+from .schema import ActionSchema
 from pydantic import ValidationError
 from dotenv import load_dotenv
-from reyna_bridge import bridge
+from .reyna_bridge import bridge
 
 load_dotenv()
 

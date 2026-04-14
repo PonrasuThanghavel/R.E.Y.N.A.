@@ -4,6 +4,11 @@ Quick test to verify llm.py generates proper ActionSchema
 """
 
 import sys
+from pathlib import Path
+
+# Add src to path
+sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
+
 from llm import generate_action
 
 print("Testing LLM action generation with lightweight Qwen model...\n")

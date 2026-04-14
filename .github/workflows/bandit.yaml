@@ -1,0 +1,22 @@
+name: Code Quality & Security
+
+on: [push, pull_request]
+
+jobs:
+needs :black  
+  bandit:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+
+      - name: Install Bandit
+        run: pip install bandit
+
+      - name: Run Bandit security check
+        run: bandit -r src/

@@ -7,7 +7,7 @@ Verifies connectivity and configuration status
 import sys
 import json
 from pathlib import Path
-from reyna_bridge import bridge
+from .reyna_bridge import bridge
 
 
 def check_bridge_status():

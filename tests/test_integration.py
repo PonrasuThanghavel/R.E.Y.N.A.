@@ -6,6 +6,11 @@ This script validates that the LLM integration is working correctly.
 
 import sys
 import json
+from pathlib import Path
+
+# Add src to path
+sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
+
 from llm import generate_action
 
 

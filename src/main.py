@@ -1,7 +1,7 @@
 import sys
-from llm import generate_action
-from router import route_action
-from memory import memory
+from .llm import generate_action
+from .router import route_action
+from .memory import memory
 
 
 def main():
