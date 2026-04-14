@@ -34,26 +34,27 @@ Always map the intent to the closest tool. If it's a general question not matchi
 Respond with strict JSON only.
 """
 
+
 def generate_action(user_input: str, context: str) -> ActionSchema:
     """
     Generate a structured action using OpenClaw Reyna bridge (if available)
     or fallback to local Ollama model.
-    
+
     Args:
         user_input: The user's input string
         context: Recent conversation context
-        
+
     Returns:
         ActionSchema object or None if generation fails
     """
-    
+
     # Try OpenClaw Reyna bridge first if enabled
     if USE_REYNA_BRIDGE and bridge.is_connected():
         action_obj = _generate_action_via_bridge(user_input, context)
         if action_obj:
             return action_obj
         # Fall through to Ollama if bridge fails
-    
+
     # Fallback to local Ollama
     return _generate_action_via_ollama(user_input, context)
 
@@ -62,18 +63,15 @@ def _generate_action_via_bridge(user_input: str, context: str) -> ActionSchema:
     """Generate action via OpenClaw Reyna bridge."""
     try:
         full_prompt = f"{SYSTEM_PROMPT}\n\n{context}\n\nUser: {user_input}\nREYNA Action (JSON only):"
-        
+
         response = bridge.ask_reyna(
             full_prompt,
-            metadata={
-                "type": "action_generation",
-                "model": "reyna-openclaw"
-            }
+            metadata={"type": "action_generation", "model": "reyna-openclaw"},
         )
-        
+
         if not response:
             return None
-        
+
         # Parse JSON response
         try:
             parsed_json = json.loads(response)
@@ -86,11 +84,11 @@ def _generate_action_via_bridge(user_input: str, context: str) -> ActionSchema:
             else:
                 json_str = response
             parsed_json = json.loads(json_str)
-        
+
         action_obj = ActionSchema(**parsed_json)
         print("[System] Using OpenClaw Reyna bridge")
         return action_obj
-        
+
     except ValidationError as e:
         print(f"[Error: Bridge] LLM output didn't match schema:\n{e}")
         return None
@@ -101,7 +99,9 @@ def _generate_action_via_bridge(user_input: str, context: str) -> ActionSchema:
 
 def _generate_action_via_ollama(user_input: str, context: str) -> ActionSchema:
     """Generate action via local Ollama model."""
-    full_prompt = f"{SYSTEM_PROMPT}\n\n{context}\n\nUser: {user_input}\nREYNA Action (JSON only):"
+    full_prompt = (
+        f"{SYSTEM_PROMPT}\n\n{context}\n\nUser: {user_input}\nREYNA Action (JSON only):"
+    )
 
     try:
         # Call local Ollama API
@@ -111,12 +111,12 @@ def _generate_action_via_ollama(user_input: str, context: str) -> ActionSchema:
                 "model": MODEL_NAME,
                 "prompt": full_prompt,
                 "stream": False,
-                "temperature": 0.0
+                "temperature": 0.0,
             },
-            timeout=60
+            timeout=60,
         )
         response.raise_for_status()
-        
+
         data = response.json()
         output_text = data.get("response", "").strip()
 
@@ -138,9 +138,11 @@ def _generate_action_via_ollama(user_input: str, context: str) -> ActionSchema:
         action_obj = ActionSchema(**parsed_json)
         print(f"[System] Using local Ollama model: {MODEL_NAME}")
         return action_obj
-        
+
     except requests.exceptions.ConnectionError:
-        print(f"[Error: LLM Connection] Could not connect to Ollama at {OLLAMA_BASE_URL}")
+        print(
+            f"[Error: LLM Connection] Could not connect to Ollama at {OLLAMA_BASE_URL}"
+        )
         print("Make sure Ollama is running: ollama serve")
         return None
     except requests.exceptions.Timeout:
@@ -150,7 +152,9 @@ def _generate_action_via_ollama(user_input: str, context: str) -> ActionSchema:
         print(f"[Error: LLM Connection] Ollama request failed: {e}")
         return None
     except json.JSONDecodeError as e:
-        print(f"[Error: Decision Layer] LLM did not output valid JSON. Raw output:\n{output_text}")
+        print(
+            f"[Error: Decision Layer] LLM did not output valid JSON. Raw output:\n{output_text}"
+        )
         print(f"JSON Error: {e}")
         return None
     except ValidationError as e:
