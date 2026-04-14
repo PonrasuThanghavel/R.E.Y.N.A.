@@ -1,6 +1,8 @@
 name: Dependency Check
 
-on: [push, pull_request]
+on:
+  push:
+  pull_request:
   schedule:
     - cron: '0 0 * * 0'  # Weekly on Sunday
 
